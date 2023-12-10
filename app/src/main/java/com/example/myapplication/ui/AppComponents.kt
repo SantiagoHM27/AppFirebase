@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -56,7 +57,7 @@ fun TopBar(value:String){
 
         Image(
             modifier = Modifier.size(80.dp),
-            painter = painterResource(id = R.drawable.rick_y_morty_serie_de_tv_157026175_large),
+            painter = painterResource(id = R.drawable.oip),
             contentDescription = "Logo"
         )
     }
@@ -106,6 +107,7 @@ fun TextFieldComponent(
             imeAction = ImeAction.Done
         ),
         keyboardActions = KeyboardActions {
+            localFocusModifier.clearFocus()
 
         }
         )
@@ -113,9 +115,14 @@ fun TextFieldComponent(
 }
 
 @Composable
-fun AnimalCard(image: Int, selected : Boolean, animalSelected : (animalName:String) -> Unit
-){
-    Card (
+fun AnimalCard(
+    image: Int,
+    selected: Boolean,
+    animalSelected: (animalName: String) -> Unit
+) {
+    val localFocusModifier = LocalFocusManager.current
+
+    Card(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .padding(24.dp)
@@ -123,32 +130,49 @@ fun AnimalCard(image: Int, selected : Boolean, animalSelected : (animalName:Stri
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Box(
-          modifier = Modifier
-              .fillMaxSize()
-              .border(
-                  width = 1.dp,
-                  color = if (selected) Color.Green else Color.Transparent,
-                  shape = RoundedCornerShape(8.dp)
-
-              )
-        ){
-
-
-        Image(
             modifier = Modifier
-                .padding(16.dp)
-                .wrapContentWidth()
-                .wrapContentHeight()
+                .fillMaxSize()
+                .border(
+                    width = 1.dp,
+                    color = if (selected) Color.Green else Color.Transparent,
+                    shape = RoundedCornerShape(8.dp)
+                )
                 .clickable {
                     val animalName = if (image == R.drawable.gato2) "Cat" else "Dog"
                     animalSelected(animalName)
-
-                },
-            painter = painterResource(id = image) ,
-            contentDescription = "Animal Image"
-        )
+                    localFocusModifier.clearFocus()
+                }
+        ) {
+            Image(
+                modifier = Modifier
+                    .padding(16.dp)
+                    .wrapContentWidth()
+                    .wrapContentHeight(),
+                painter = painterResource(id = image),
+                contentDescription = "Animal Image"
+            )
+        }
     }
-    }
-
 }
+
+
+
+
+@Composable
+fun ButtonComponent(
+    goToDetailsScreen: () -> Unit
+){
+    Button(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = {
+            goToDetailsScreen()
+         }) {
+        TextComponent(textValue = "Go to Details Screen"
+            , textSize = 18.sp,
+            colorValue = Color.White
+        )
+        
+    }
+}
+
 

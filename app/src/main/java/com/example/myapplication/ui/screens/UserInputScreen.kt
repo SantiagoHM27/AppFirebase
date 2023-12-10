@@ -20,12 +20,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
 import com.example.myapplication.data.UserDataUiEvents
+import com.example.myapplication.ui.ButtonComponent
 import com.example.myapplication.ui.TextComponent
 import com.example.myapplication.ui.TextFieldComponent
 import com.example.myapplication.ui.TopBar
@@ -85,16 +87,31 @@ fun UserInputScreen(userInputViewModel: UserInputViewModel) {
             }
 
 
+            Spacer(modifier =  Modifier.weight(1f))
+
+             if(userInputViewModel.isValidState()){
+                ButtonComponent(
+                    goToDetailsScreen = {
+                        println("=====================ComingHere")
+                        println("=====================${userInputViewModel.uiState.value.nameEntered} and ${userInputViewModel.uiState.value.animalSelected}")
+
+                    }
+                )
 
 
-
+            }
         }
     }
 }
 @Composable
-fun AnimalCard(image: Int, selected : Boolean, animalSelected : (animalName:String) -> Unit
-){
-    Card (
+fun AnimalCard(
+    image: Int,
+    selected: Boolean,
+    animalSelected: (animalName: String) -> Unit
+) {
+    val localFocusModifier = LocalFocusManager.current
+
+    Card(
         shape = RoundedCornerShape(8.dp),
         modifier = Modifier
             .padding(24.dp)
@@ -108,27 +125,23 @@ fun AnimalCard(image: Int, selected : Boolean, animalSelected : (animalName:Stri
                     width = 1.dp,
                     color = if (selected) Color.Green else Color.Transparent,
                     shape = RoundedCornerShape(8.dp)
-
                 )
-        ){
-
-
+                .clickable {
+                    val animalName = if (image == R.drawable.gato2) "Cat" else "Dog"
+                    animalSelected(animalName)
+                    localFocusModifier.clearFocus()
+                }
+        ) {
             Image(
                 modifier = Modifier
                     .padding(16.dp)
                     .wrapContentWidth()
-                    .wrapContentHeight()
-                    .clickable {
-                        val animalName = if (image == R.drawable.gato2) "Cat" else "Dog"
-                        animalSelected(animalName)
-
-                    },
-                painter = painterResource(id = image) ,
+                    .wrapContentHeight(),
+                painter = painterResource(id = image),
                 contentDescription = "Animal Image"
             )
         }
     }
-
 }
 
 
