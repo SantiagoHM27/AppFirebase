@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.myapplication.R
@@ -34,7 +33,9 @@ import com.example.myapplication.ui.TopBar
 import com.example.myapplication.ui.UserInputViewModel
 
 @Composable
-fun UserInputScreen(userInputViewModel: UserInputViewModel) {
+fun UserInputScreen(userInputViewModel: UserInputViewModel,
+                    showWelcomeScreen: (valuesPair: Pair<String, String>) -> Unit
+){
     Surface (modifier = Modifier.fillMaxSize()){
         Column (modifier = Modifier
             .fillMaxSize()
@@ -50,7 +51,7 @@ fun UserInputScreen(userInputViewModel: UserInputViewModel) {
                 textSize = 18.sp)
 
             Spacer(modifier = Modifier.size(60.dp))
-            
+
             TextComponent(textValue = "Name", textSize = 18.sp)
             Spacer(modifier = Modifier.size(10.dp))
 
@@ -89,11 +90,17 @@ fun UserInputScreen(userInputViewModel: UserInputViewModel) {
 
             Spacer(modifier =  Modifier.weight(1f))
 
-             if(userInputViewModel.isValidState()){
+            if(userInputViewModel.isValidState()){
                 ButtonComponent(
                     goToDetailsScreen = {
                         println("=====================ComingHere")
                         println("=====================${userInputViewModel.uiState.value.nameEntered} and ${userInputViewModel.uiState.value.animalSelected}")
+                        showWelcomeScreen(
+                            Pair(
+                                userInputViewModel.uiState.value.nameEntered,
+                                userInputViewModel.uiState.value.animalSelected
+                            )
+                        )
 
                     }
                 )
@@ -142,12 +149,4 @@ fun AnimalCard(
             )
         }
     }
-}
-
-
-
-@Preview
-@Composable
-fun UserInputScreenPreview(){
-    UserInputScreen(UserInputViewModel())
 }
