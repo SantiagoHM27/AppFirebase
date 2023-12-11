@@ -31,7 +31,8 @@ import com.example.myapplication.ui.TextComponent
 import com.example.myapplication.ui.TextFieldComponent
 import com.example.myapplication.ui.TopBar
 import com.example.myapplication.ui.UserInputViewModel
-
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 @Composable
 fun UserInputScreen(userInputViewModel: UserInputViewModel,
                     showWelcomeScreen: (valuesPair: Pair<String, String>) -> Unit
@@ -89,23 +90,24 @@ fun UserInputScreen(userInputViewModel: UserInputViewModel,
 
 
             Spacer(modifier =  Modifier.weight(1f))
-
+            //Connection to database
             if(userInputViewModel.isValidState()){
                 ButtonComponent(
                     goToDetailsScreen = {
-                        println("=====================ComingHere")
-                        println("=====================${userInputViewModel.uiState.value.nameEntered} and ${userInputViewModel.uiState.value.animalSelected}")
-                        showWelcomeScreen(
-                            Pair(
-                                userInputViewModel.uiState.value.nameEntered,
-                                userInputViewModel.uiState.value.animalSelected
+                        val nameEntered = userInputViewModel.uiState.value.nameEntered
+                        val animalSelected = userInputViewModel.uiState.value.animalSelected
+                        if (nameEntered.isNotBlank() && animalSelected.isNotBlank()) {
+                            val database = Firebase.database
+                            val myRef = database.getReference("message")
+                            val userData = mapOf(
+                                "nom" to nameEntered,
+                                "anim" to animalSelected
                             )
-                        )
-
+                            myRef.setValue(userData)
+                            showWelcomeScreen(Pair(nameEntered, animalSelected))
+                        }
                     }
                 )
-
-
             }
         }
     }
